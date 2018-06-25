@@ -1,0 +1,32 @@
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\ImageProcessingPractice.exe
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\ImageProcessingPractice.pdb
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.dll
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Imaging.dll
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Video.DirectShow.dll
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Video.dll
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Math.dll
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.xml
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Imaging.xml
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Video.xml
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Video.DirectShow.xml
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Math.xml
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.Form1.resources
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.Properties.Resources.resources
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.csproj.GenerateResource.Cache
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.exe
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.pdb
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Imaging.Formats.dll
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Imaging.Formats.xml
+c:\users\hyrel\documents\visual studio 2015\Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.csprojResolveAssemblyReference.cache
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.Form1.resources
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.Properties.Resources.resources
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.csproj.GenerateResource.Cache
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\ImageProcessingPractice.exe
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\ImageProcessingPractice.pdb
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Controls.dll
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Math.dll
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Controls.pdb
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Controls.xml
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Math.xml
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.exe
+Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.pdb
