@@ -38,3 +38,7 @@ C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\
 C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.Properties.Resources.resources
 C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.csproj.GenerateResource.Cache
 C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.csprojResolveAssemblyReference.cache
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\ImageProcessingPractice.exe.config
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\HyrelPrinterControls.dll
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\Ionic.Zip.dll
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\HyrelPrinterControls.pdb

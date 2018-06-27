@@ -19,7 +19,7 @@ using AForge.Math.Geometry;
 
 namespace ImageProcessingPractice
 {
-    public partial class Form1 : Form
+    public partial class greySliderBar : Form
     {
         public VideoCaptureDevice captureDevice;
         FilterInfoCollection deviceList;
@@ -27,7 +27,7 @@ namespace ImageProcessingPractice
         public double cg = .7154;
         public double cb = .0721;
         private System.Timers.Timer frameTimer = new System.Timers.Timer(2000);
-        public Form1()
+        public greySliderBar()
         {
             InitializeComponent();
         }
@@ -74,7 +74,7 @@ namespace ImageProcessingPractice
 
             //pictureBox1.Image = (Bitmap).getCurrentVideoFrame();
             Bitmap colorImg = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
-            pictureBox4.Image = (System.Drawing.Image)colorImg.Clone();
+            scrollableImagePanel1.Image = (Bitmap)colorImg.Clone();
 
             Grayscale filter = new Grayscale(cr, cg, cb);
             pictureBox2.Image = (Bitmap)filter.Apply(colorImg);
@@ -256,7 +256,7 @@ namespace ImageProcessingPractice
             if (pictureBox2.Image != null)
             {
                 //pictureBox3.Image = videoSourcePlayer1.GetCurrentVideoFrame();
-                extractHistogramData(pictureBox2.Image, pictureBox4.Image);
+                extractHistogramData(pictureBox2.Image, scrollableImagePanel1.Image);
 
             }
             /*pictureBox2.Image.Dispose();
@@ -266,19 +266,27 @@ namespace ImageProcessingPractice
 
         private void circleDetection_Click(object sender, EventArgs e)
         {
+            Bitmap colorImg = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
+            Grayscale grayfilter = new Grayscale(cr, cg, cb);
+            Bitmap originalImage = (Bitmap)grayfilter.Apply(colorImg);
+            scrollableImagePanel1.Image = originalImage;
+            CannyEdgeDetector edgeDectector = new CannyEdgeDetector();
+            edgeDectector.HighThreshold =(byte) cannyLowerThresholdSlider.Value;
+            edgeDectector.LowThreshold = (byte)hScrollBar2.Value;
+            edgeDectector.ApplyInPlace(scrollableImagePanel1.Image);
+
+
 
             //pictureBox4.SizeMode() = PictureBoxSizeMode.Zoom;
             //pictureBox4.Image = videoSourcePlayer1.GetCurrentVideoFrame();
-            if(pictureBox2.Image!=null)
-            pictureBox4.Image = (Bitmap)pictureBox2.Image.Clone();
-            Bitmap originalImage = (Bitmap)pictureBox4.Image;
-            BlobCounter blobCounter = new BlobCounter();
-            SimpleShapeChecker shapeChecker = new SimpleShapeChecker();
-            blobCounter.ProcessImage(originalImage);
-            Blob[] blobObjectArray = blobCounter.GetObjectsInformation();
+
+            /*Bitmap colorImg = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
+            Grayscale grayfilter = new Grayscale(cr, cg, cb);
+            Bitmap originalImage = (Bitmap)grayfilter.Apply(colorImg);
+            scrollableImagePanel1.Image = originalImage;
             float thresholdValue = hScrollBar1.Value;
             Threshold filter = new Threshold((int)thresholdValue);
-            filter.ApplyInPlace((Bitmap)pictureBox4.Image);
+            filter.ApplyInPlace(scrollableImagePanel1.Image);*/
             
            /* Graphics g = Graphics.FromImage(originalImage);
             Pen yellowPen = new Pen(Color.Yellow, 5.0f);
@@ -303,6 +311,17 @@ namespace ImageProcessingPractice
             g.Dispose();*/
             
         }
+        public Bitmap edgeDetection() {
+            Bitmap colorImg = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
+            Grayscale grayfilter = new Grayscale(cr, cg, cb);
+            Bitmap originalImage = (Bitmap)grayfilter.Apply(colorImg);
+            scrollableImagePanel1.Image = originalImage;
+            CannyEdgeDetector edgeDectector = new CannyEdgeDetector();
+            edgeDectector.HighThreshold = (byte)cannyUpperThresholdSlider.Value;
+            edgeDectector.LowThreshold = (byte)cannyLowerThresholdSlider.Value;
+            edgeDectector.ApplyInPlace(scrollableImagePanel1.Image);
+            return (Bitmap)scrollableImagePanel1.Image;
+        }
         private System.Drawing.Point[] ToPointsArray(List<IntPoint> points)
         {
             System.Drawing.Point[] array = new System.Drawing.Point[points.Count];
@@ -310,45 +329,57 @@ namespace ImageProcessingPractice
         }
         private void polygonFinder_Click(object sender, EventArgs e)
         {
+            processShapes();
+        }
+        public void processShapes()
+        {
+
+
             //Working Variables
             Pen fuschiaPen = new Pen(Color.Fuchsia, 3.0f);
             Pen aquaPen = new Pen(Color.Aqua, 5.0f);
             Pen redPen = new Pen(Color.Red, 3.0f);
             Pen orangePen = new Pen(Color.Orange, 3.0f);
 
+
             //Locking Image Bits
-            Bitmap workingFrame = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
+            Bitmap workingFrame = edgeDetection();
             System.Drawing.Imaging.BitmapData bmpData = workingFrame.LockBits(new Rectangle(0, 0, workingFrame.Width, workingFrame.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, workingFrame.PixelFormat);
-            
+
 
             //Turning the Background Black and getting rid of the green of the PCB
             ColorFiltering colorFilter = new ColorFiltering();
+            Threshold filter = new Threshold((int)hScrollBar1.Value);
 
             colorFilter.Red = new IntRange(0, hScrollBar1.Value);
             colorFilter.Blue = new IntRange(0, hScrollBar1.Value);
             colorFilter.Green = new IntRange(0, hScrollBar1.Value);
 
-            colorFilter.ApplyInPlace(bmpData);
+            // colorFilter.ApplyInPlace(bmpData);
             workingFrame.UnlockBits(bmpData);
-            
-            
+
+
+
             //Identifing the Blobs in target picture
             BlobCounter blobCounter = new BlobCounter();
 
             blobCounter.FilterBlobs = true;
-            //blobCounter.MinHeight = 5;
-            //blobCounter.MinWidth = 5;
-            blobCounter.MinHeight = hScrollBar2.Value;
-            blobCounter.MinWidth = hScrollBar2.Value;
+            blobCounter.MinHeight = 5;
+            blobCounter.MinWidth = 5;
+            //blobCounter.MinHeight = hScrollBar2.Value;
+            //blobCounter.MinWidth = hScrollBar2.Value;
 
             blobCounter.ProcessImage(bmpData);
             Blob[] blobs = blobCounter.GetObjectsInformation();
-             
-            pictureBox4.Image = (System.Drawing.Image) workingFrame.Clone();
+
+            scrollableImagePanel1.Image = (Bitmap)workingFrame.Clone();
             //Classifying the objects{}
             AForge.Math.Geometry.SimpleShapeChecker shapeCheck = new SimpleShapeChecker();
-            Graphics g = Graphics.FromImage(pictureBox4.Image);
-           
+            Bitmap tempBitmap = new Bitmap(workingFrame.Width, workingFrame.Height);
+            Graphics g = Graphics.FromImage(tempBitmap);
+            g.DrawImage(workingFrame, 0, 0);
+            scrollableImagePanel1.Image = tempBitmap;
+
 
             int blobLength = blobs.Length;
             for (int i = 0; i < blobLength; i++)
@@ -369,155 +400,104 @@ namespace ImageProcessingPractice
                     List<IntPoint> corners = PointsCloud.FindQuadrilateralCorners(edgePoints);
                     if (shapeCheck.IsQuadrilateral(edgePoints, out corners))
                     {
-                        g.DrawPolygon(redPen, ToPointsArray(corners));
-                        Rectangle testRectangle = new Rectangle(corners[0].X,corners[0].Y,(corners[1].X-corners[0].X),corners[3].Y-corners[0].Y);
+                        //g.DrawPolygon(redPen, ToPointsArray(corners));
+                        Rectangle testRectangle = new Rectangle(corners[0].X, corners[0].Y, (corners[1].X - corners[0].X), corners[3].Y - corners[0].Y);
                         g.DrawRectangle(redPen, testRectangle);
-                        /*if (shapeCheck.CheckPolygonSubType(corners) == PolygonSubType.Rectangle)
+                        if (shapeCheck.CheckPolygonSubType(corners) == PolygonSubType.Rectangle)
                         {
                             Console.WriteLine("Rectangle Found!!");
                             g.DrawPolygon(redPen, ToPointsArray(corners));
-                            
+
                         }
                         else
                         {
                             Console.WriteLine("Rectangle Found!!!");
                             g.DrawPolygon(orangePen, ToPointsArray(corners));
-                        }*/
+                        }
                     }
 
                 }
-               
-                //redPen.Dispose();
-               //orangePen.Dispose();
-              
-                //g.Dispose();
-                
 
+                //redPen.Dispose();
+                //orangePen.Dispose();
+
+                //g.Dispose();
+
+
+            }
         }
 
 
+        private void label6_Click(object sender, EventArgs e)
+        {
 
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            /*pictureBox4.Image = Clipboard.GetImage();
-            Bitmap temporaryBitmap = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
-            BlobCounter blobCounter = new BlobCounter();
-            blobCounter.ProcessImage(temporaryBitmap);
-            Blob[] blobObjectArray = blobCounter.GetObjectsInformation();
-            Graphics g = Graphics.FromImage(temporaryBitmap);
-            Pen fuschsiaPen = new Pen(Color.Fuchsia, 5.0f);
-            SimpleShapeChecker shapeChecker = new SimpleShapeChecker();
-            int length = blobObjectArray.Length;
-            // create filter
-            BlobsFiltering blobFilter = new BlobsFiltering();
-            // configure filter
-            blobFilter.CoupledSizeFiltering = true;
-            blobFilter.MinWidth = 20;
-            blobFilter.MinHeight = 20;
-            blobFilter.MaxHeight = hScrollBar2.Value;
-            blobFilter.MaxWidth = hScrollBar2.Value;
-            // apply the filter
-            blobFilter.ApplyInPlace(temporaryBitmap);
-            for (int i = 0; i < length; i++) {
-                List<IntPoint> edgePoints = blobCounter.GetBlobsEdgePoints(blobObjectArray[i]);
-                List<IntPoint> corners;
+        }
 
-               if (shapeChecker.IsQuadrilateral(edgePoints, out corners ))
-                {
-                    g.DrawPolygon(fuschsiaPen, ToPointsArray(corners));
-                }
-            }
-            pictureBox4.Image= temporaryBitmap;
+        private void label5_Click(object sender, EventArgs e)
+        {
 
-            Bitmap originalBitmap = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
-            EuclideanColorFiltering colorFilter = new EuclideanColorFiltering();
-            colorFilter.CenterColor = new RGB((byte)hScrollBar1.Value, (byte)hScrollBar1.Value, (byte)hScrollBar1.Value);
-            colorFilter.Radius = (short)hScrollBar2.Value;
-            pictureBox4.Image = colorFilter.Apply(originalBitmap);
-            BlobCounter _blobCounter = new BlobCounter();
-            //Configure Filter
-            _blobCounter.MinWidth = 20;
-            _blobCounter.MinHeight = 20;
-            _blobCounter.FilterBlobs = true;
+        }
 
-            _blobCounter.ProcessImage(originalBitmap);
-            Blob[] _blobPoints = _blobCounter.GetObjectsInformation();
+        private void hScrollBar2_Scroll(object sender, ScrollEventArgs e)
+        {
+            labelBlobSize.Text = hScrollBar2.Value.ToString();
+            processShapes();
 
-            Graphics _g = Graphics.FromImage(originalBitmap);
+        }
 
-            SimpleShapeChecker _shapeChecker = new SimpleShapeChecker();
-            for (int i = 0; i < _blobPoints.Length; i++)
-            {
-                List<IntPoint> _edgePoint = _blobCounter.GetBlobsEdgePoints(_blobPoints[i]);
-                List<IntPoint> _corners = null;
-                AForge.Point _center;
-                float _radius;
+        private void label7_Click(object sender, EventArgs e)
+        {
 
-                if (_shapeChecker.IsQuadrilateral(_edgePoint, out _corners))
-                {
-                    Rectangle[] _rects = _blobCounter.GetObjectsRectangles();
+        }
 
-                    System.Drawing.Point[] _coordinates = ToPointsArray(_corners);
-                    int _x = _coordinates[0].X;
-                    int _y = _coordinates[0].Y;
-                    Pen _pen = new Pen(Color.Blue, 5.0f);
+        private void cannyLowerThresholdSlider_Scroll(object sender, ScrollEventArgs e)
+        {
+            cannyLowerValue.Text = cannyLowerThresholdSlider.Value.ToString();
+            processShapes();
 
-                    if (_coordinates.Length == 4)
-                    {
-                        string _shapeString = "" + _shapeChecker.CheckShapeType(_edgePoint);
-                        _g.DrawString(_shapeString, new Font("Times New Roman", 48, FontStyle.Bold), Brushes.Fuchsia, _x, _y);
-                        _g.DrawPolygon(_pen, ToPointsArray(_corners));
-                    }
-                    //size of rectange
-                    foreach (Rectangle rc in _rects)
-                    {
-                        ///for debug
-                        //System.Diagnostics.Debug.WriteLine(
-                        //    string.Format("Rect size: ({0}, {1})", rc.Width, rc.Height));
+        }
 
-                        /*iFeatureWidth = rc.Width;
-                        double dis = FindDistance(iFeatureWidth);
-                        _g.DrawString(dis.ToString("N2"), new Font("Times New Roman", 48, FontStyle.Bold), Brushes.Black, _x, _y + 60);
-                    }
-                }
-                if (_shapeChecker.IsCircle(_edgePoint, out _center, out _radius))
-                {
-                    Rectangle[] _rects = _blobCounter.GetObjectsRectangles();
+        private void cannyUpperThresholdSlider_Scroll(object sender, ScrollEventArgs e)
+        {
+            CannyUpperValue.Text = cannyUpperThresholdSlider.Value.ToString();
+            processShapes();
+        }
 
-                    string _shapeString = "" + _shapeChecker.CheckShapeType(_edgePoint);
-                    Pen _pen = new Pen(Color.Red, 5.0f);
-                    int _x = (int)_center.X;
-                    int _y = (int)_center.Y;
-                    _g.DrawString(_shapeString, new Font("Times New Roman", 48, FontStyle.Bold), Brushes.Fuchsia, _x, _y);
-                    _g.DrawEllipse(_pen, (float)(_center.X - _radius),
-                                         (float)(_center.Y - _radius),
-                                         (float)(_radius * 2),
-                                         (float)(_radius * 2));
+        private void label13_Click(object sender, EventArgs e)
+        {
 
-                    //size of rectange
-                    foreach (Rectangle rc in _rects)
-                    {
-                        ///for debug
-                        //System.Diagnostics.Debug.WriteLine(
-                        //    string.Format("Circle size: ({0}, {1})", rc.Width, rc.Height));
+        }
 
-                        /*iFeatureWidth = rc.Width;
-                        double dis = FindDistance(iFeatureWidth);
-                        //textBox1.Text = dis.ToString("N2");
-                        _g.DrawString(dis.ToString("N2"), _font, _brush, _x, _y + 60);*/
-                    }
-                }
-            }
+        private void label14_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void graySlider_Scroll(object sender, ScrollEventArgs e)
+        {
+            grayLabel.Text = graySlider.Value.ToString();
+            processShapes();
+        }
+
+        private void redSlider_Scroll(object sender, ScrollEventArgs e)
+        {
+            redLabel.Text = redSlider.Value.ToString();
+            processShapes();
+        }
+
+        private void blueSlider_Scroll(object sender, ScrollEventArgs e)
+        {
+            blueValue.Text = blueSlider.Value.ToString();
+            processShapes();
+        }
+
+        private void greenSlider_Scroll(object sender, ScrollEventArgs e)
+        {
+            greenValue.Text = greenSlider.Value.ToString();
+            processShapes();
+        }
+    }
+}
         
 
             
