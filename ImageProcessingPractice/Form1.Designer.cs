@@ -51,10 +51,10 @@
             this.NUDverticalScanlineSpace = new System.Windows.Forms.NumericUpDown();
             this.circleDetection = new System.Windows.Forms.Button();
             this.polygonFinder = new System.Windows.Forms.Button();
-            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.hScrollBar2 = new System.Windows.Forms.HScrollBar();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
@@ -165,7 +165,6 @@
             this.label1.Size = new System.Drawing.Size(74, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "Original Image";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // label2
             // 
@@ -294,24 +293,18 @@
             this.polygonFinder.Name = "polygonFinder";
             this.polygonFinder.Size = new System.Drawing.Size(114, 27);
             this.polygonFinder.TabIndex = 15;
-            this.polygonFinder.Text = "Identify Polygons";
+            this.polygonFinder.Text = "Identify Shapes";
             this.polygonFinder.UseVisualStyleBackColor = true;
             this.polygonFinder.Click += new System.EventHandler(this.polygonFinder_Click);
-            // 
-            // hScrollBar1
-            // 
-            this.hScrollBar1.Location = new System.Drawing.Point(31, 118);
-            this.hScrollBar1.Maximum = 255;
-            this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(253, 23);
-            this.hScrollBar1.TabIndex = 16;
             // 
             // hScrollBar2
             // 
             this.hScrollBar2.Location = new System.Drawing.Point(388, 118);
+            this.hScrollBar2.Minimum = 5;
             this.hScrollBar2.Name = "hScrollBar2";
             this.hScrollBar2.Size = new System.Drawing.Size(253, 23);
             this.hScrollBar2.TabIndex = 17;
+            this.hScrollBar2.Value = 5;
             // 
             // label5
             // 
@@ -330,6 +323,14 @@
             this.label6.Size = new System.Drawing.Size(51, 13);
             this.label6.TabIndex = 19;
             this.label6.Text = "Blob Size";
+            // 
+            // hScrollBar1
+            // 
+            this.hScrollBar1.Location = new System.Drawing.Point(31, 118);
+            this.hScrollBar1.Maximum = 300;
+            this.hScrollBar1.Name = "hScrollBar1";
+            this.hScrollBar1.Size = new System.Drawing.Size(253, 23);
+            this.hScrollBar1.TabIndex = 16;
             // 
             // Form1
             // 
@@ -397,10 +398,10 @@
         private System.Windows.Forms.NumericUpDown NUDverticalScanlineSpace;
         private System.Windows.Forms.Button circleDetection;
         private System.Windows.Forms.Button polygonFinder;
-        private System.Windows.Forms.HScrollBar hScrollBar1;
         private System.Windows.Forms.HScrollBar hScrollBar2;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.HScrollBar hScrollBar1;
     }
 }
 

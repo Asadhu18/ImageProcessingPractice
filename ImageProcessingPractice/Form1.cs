@@ -310,6 +310,105 @@ namespace ImageProcessingPractice
         }
         private void polygonFinder_Click(object sender, EventArgs e)
         {
+            //Working Variables
+            Pen fuschiaPen = new Pen(Color.Fuchsia, 3.0f);
+            Pen aquaPen = new Pen(Color.Aqua, 5.0f);
+            Pen redPen = new Pen(Color.Red, 3.0f);
+            Pen orangePen = new Pen(Color.Orange, 3.0f);
+
+            //Locking Image Bits
+            Bitmap workingFrame = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
+            System.Drawing.Imaging.BitmapData bmpData = workingFrame.LockBits(new Rectangle(0, 0, workingFrame.Width, workingFrame.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, workingFrame.PixelFormat);
+            
+
+            //Turning the Background Black and getting rid of the green of the PCB
+            ColorFiltering colorFilter = new ColorFiltering();
+
+            colorFilter.Red = new IntRange(0, hScrollBar1.Value);
+            colorFilter.Blue = new IntRange(0, hScrollBar1.Value);
+            colorFilter.Green = new IntRange(0, hScrollBar1.Value);
+
+            colorFilter.ApplyInPlace(bmpData);
+            workingFrame.UnlockBits(bmpData);
+            
+            
+            //Identifing the Blobs in target picture
+            BlobCounter blobCounter = new BlobCounter();
+
+            blobCounter.FilterBlobs = true;
+            //blobCounter.MinHeight = 5;
+            //blobCounter.MinWidth = 5;
+            blobCounter.MinHeight = hScrollBar2.Value;
+            blobCounter.MinWidth = hScrollBar2.Value;
+
+            blobCounter.ProcessImage(bmpData);
+            Blob[] blobs = blobCounter.GetObjectsInformation();
+             
+            pictureBox4.Image = (System.Drawing.Image) workingFrame.Clone();
+            //Classifying the objects{}
+            AForge.Math.Geometry.SimpleShapeChecker shapeCheck = new SimpleShapeChecker();
+            Graphics g = Graphics.FromImage(pictureBox4.Image);
+           
+
+            int blobLength = blobs.Length;
+            for (int i = 0; i < blobLength; i++)
+            {
+                List<IntPoint> edgePoints = blobCounter.GetBlobsEdgePoints(blobs[i]);
+                AForge.Point center;
+                float radius;
+
+                if (shapeCheck.IsCircle(edgePoints, out center, out radius))
+                {
+                    float tempLocationX = (float)(center.X - radius);
+                    float tempLocationY = (float)(center.Y - radius);
+                    float diameter = radius * 2.0f;
+                    g.DrawEllipse(fuschiaPen, tempLocationX, tempLocationY, diameter, diameter);
+                }
+                else
+                {
+                    List<IntPoint> corners = PointsCloud.FindQuadrilateralCorners(edgePoints);
+                    if (shapeCheck.IsQuadrilateral(edgePoints, out corners))
+                    {
+                        g.DrawPolygon(redPen, ToPointsArray(corners));
+                        Rectangle testRectangle = new Rectangle(corners[0].X,corners[0].Y,(corners[1].X-corners[0].X),corners[3].Y-corners[0].Y);
+                        g.DrawRectangle(redPen, testRectangle);
+                        /*if (shapeCheck.CheckPolygonSubType(corners) == PolygonSubType.Rectangle)
+                        {
+                            Console.WriteLine("Rectangle Found!!");
+                            g.DrawPolygon(redPen, ToPointsArray(corners));
+                            
+                        }
+                        else
+                        {
+                            Console.WriteLine("Rectangle Found!!!");
+                            g.DrawPolygon(orangePen, ToPointsArray(corners));
+                        }*/
+                    }
+
+                }
+               
+                //redPen.Dispose();
+               //orangePen.Dispose();
+              
+                //g.Dispose();
+                
+
+        }
+
+
+
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             /*pictureBox4.Image = Clipboard.GetImage();
             Bitmap temporaryBitmap = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
             BlobCounter blobCounter = new BlobCounter();
@@ -338,7 +437,7 @@ namespace ImageProcessingPractice
                     g.DrawPolygon(fuschsiaPen, ToPointsArray(corners));
                 }
             }
-            pictureBox4.Image= temporaryBitmap;*/
+            pictureBox4.Image= temporaryBitmap;
 
             Bitmap originalBitmap = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
             EuclideanColorFiltering colorFilter = new EuclideanColorFiltering();
@@ -388,7 +487,7 @@ namespace ImageProcessingPractice
 
                         /*iFeatureWidth = rc.Width;
                         double dis = FindDistance(iFeatureWidth);
-                        _g.DrawString(dis.ToString("N2"), new Font("Times New Roman", 48, FontStyle.Bold), Brushes.Black, _x, _y + 60);*/
+                        _g.DrawString(dis.ToString("N2"), new Font("Times New Roman", 48, FontStyle.Bold), Brushes.Black, _x, _y + 60);
                     }
                 }
                 if (_shapeChecker.IsCircle(_edgePoint, out _center, out _radius))
@@ -419,16 +518,11 @@ namespace ImageProcessingPractice
                     }
                 }
             }
-        }
+        
 
             
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-            
+        
+   
 
-
-        }
-    }
-}
 
