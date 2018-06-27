@@ -30,3 +30,11 @@ Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImagePro
 Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\AForge.Math.xml
 Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.exe
 Y:\0 Akhil Sadhu Sandbox\Visual Studio Projects\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.pdb
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.exe
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.pdb
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\ImageProcessingPractice.exe
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\ImageProcessingPractice.pdb
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.Form1.resources
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.Properties.Resources.resources
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.csproj.GenerateResource.Cache
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.csprojResolveAssemblyReference.cache

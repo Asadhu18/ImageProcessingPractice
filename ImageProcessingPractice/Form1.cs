@@ -266,22 +266,25 @@ namespace ImageProcessingPractice
 
         private void circleDetection_Click(object sender, EventArgs e)
         {
+
             //pictureBox4.SizeMode() = PictureBoxSizeMode.Zoom;
-            pictureBox4.Image = videoSourcePlayer1.GetCurrentVideoFrame();
+            //pictureBox4.Image = videoSourcePlayer1.GetCurrentVideoFrame();
+            if(pictureBox2.Image!=null)
+            pictureBox4.Image = (Bitmap)pictureBox2.Image.Clone();
             Bitmap originalImage = (Bitmap)pictureBox4.Image;
             BlobCounter blobCounter = new BlobCounter();
             SimpleShapeChecker shapeChecker = new SimpleShapeChecker();
             blobCounter.ProcessImage(originalImage);
             Blob[] blobObjectArray = blobCounter.GetObjectsInformation();
-            Graphics g = Graphics.FromImage(originalImage);
+            float thresholdValue = hScrollBar1.Value;
+            Threshold filter = new Threshold((int)thresholdValue);
+            filter.ApplyInPlace((Bitmap)pictureBox4.Image);
+            
+           /* Graphics g = Graphics.FromImage(originalImage);
             Pen yellowPen = new Pen(Color.Yellow, 5.0f);
             int length = blobObjectArray.Length;
-            /*HSLFiltering blackBackground = new HSLFiltering();
-            blackBackground.Hue = new IntRange(355, 0);
-            blackBackground.Saturation = new Range(0.6f, 1);
-            blackBackground.Luminance = new Range(.5f, 1);
-            blackBackground.ApplyInPlace(originalImage);*/
-
+          
+            
 
             for (int i = 0; i < length; i++)
             {
@@ -294,31 +297,136 @@ namespace ImageProcessingPractice
                     g.DrawEllipse(yellowPen,(int) center.X-radius, (int)center.Y-radius, (int)radius *2, (int)radius *2);
                 }
             }
-            pictureBox4.Image = originalImage;
+            
 
             yellowPen.Dispose();
-            g.Dispose();
+            g.Dispose();*/
+            
         }
-
+        private System.Drawing.Point[] ToPointsArray(List<IntPoint> points)
+        {
+            System.Drawing.Point[] array = new System.Drawing.Point[points.Count];
+            return array;
+        }
         private void polygonFinder_Click(object sender, EventArgs e)
         {
-            pictureBox4.Image = Clipboard.GetImage();
+            /*pictureBox4.Image = Clipboard.GetImage();
+            Bitmap temporaryBitmap = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
             BlobCounter blobCounter = new BlobCounter();
-            blobCounter.ProcessImage((Bitmap)pictureBox4.Image);
+            blobCounter.ProcessImage(temporaryBitmap);
             Blob[] blobObjectArray = blobCounter.GetObjectsInformation();
-            Graphics g = Graphics.FromImage(pictureBox4.Image);
+            Graphics g = Graphics.FromImage(temporaryBitmap);
             Pen fuschsiaPen = new Pen(Color.Fuchsia, 5.0f);
             SimpleShapeChecker shapeChecker = new SimpleShapeChecker();
             int length = blobObjectArray.Length;
+            // create filter
+            BlobsFiltering blobFilter = new BlobsFiltering();
+            // configure filter
+            blobFilter.CoupledSizeFiltering = true;
+            blobFilter.MinWidth = 20;
+            blobFilter.MinHeight = 20;
+            blobFilter.MaxHeight = hScrollBar2.Value;
+            blobFilter.MaxWidth = hScrollBar2.Value;
+            // apply the filter
+            blobFilter.ApplyInPlace(temporaryBitmap);
             for (int i = 0; i < length; i++) {
                 List<IntPoint> edgePoints = blobCounter.GetBlobsEdgePoints(blobObjectArray[i]);
                 List<IntPoint> corners;
 
-               // if (SimpleShapeChecker.isQuadrilateral(edgePoints,))
-                //{
-
-                //}
+               if (shapeChecker.IsQuadrilateral(edgePoints, out corners ))
+                {
+                    g.DrawPolygon(fuschsiaPen, ToPointsArray(corners));
+                }
             }
+            pictureBox4.Image= temporaryBitmap;*/
+
+            Bitmap originalBitmap = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
+            EuclideanColorFiltering colorFilter = new EuclideanColorFiltering();
+            colorFilter.CenterColor = new RGB((byte)hScrollBar1.Value, (byte)hScrollBar1.Value, (byte)hScrollBar1.Value);
+            colorFilter.Radius = (short)hScrollBar2.Value;
+            pictureBox4.Image = colorFilter.Apply(originalBitmap);
+            BlobCounter _blobCounter = new BlobCounter();
+            //Configure Filter
+            _blobCounter.MinWidth = 20;
+            _blobCounter.MinHeight = 20;
+            _blobCounter.FilterBlobs = true;
+
+            _blobCounter.ProcessImage(originalBitmap);
+            Blob[] _blobPoints = _blobCounter.GetObjectsInformation();
+
+            Graphics _g = Graphics.FromImage(originalBitmap);
+
+            SimpleShapeChecker _shapeChecker = new SimpleShapeChecker();
+            for (int i = 0; i < _blobPoints.Length; i++)
+            {
+                List<IntPoint> _edgePoint = _blobCounter.GetBlobsEdgePoints(_blobPoints[i]);
+                List<IntPoint> _corners = null;
+                AForge.Point _center;
+                float _radius;
+
+                if (_shapeChecker.IsQuadrilateral(_edgePoint, out _corners))
+                {
+                    Rectangle[] _rects = _blobCounter.GetObjectsRectangles();
+
+                    System.Drawing.Point[] _coordinates = ToPointsArray(_corners);
+                    int _x = _coordinates[0].X;
+                    int _y = _coordinates[0].Y;
+                    Pen _pen = new Pen(Color.Blue, 5.0f);
+
+                    if (_coordinates.Length == 4)
+                    {
+                        string _shapeString = "" + _shapeChecker.CheckShapeType(_edgePoint);
+                        _g.DrawString(_shapeString, new Font("Times New Roman", 48, FontStyle.Bold), Brushes.Fuchsia, _x, _y);
+                        _g.DrawPolygon(_pen, ToPointsArray(_corners));
+                    }
+                    //size of rectange
+                    foreach (Rectangle rc in _rects)
+                    {
+                        ///for debug
+                        //System.Diagnostics.Debug.WriteLine(
+                        //    string.Format("Rect size: ({0}, {1})", rc.Width, rc.Height));
+
+                        /*iFeatureWidth = rc.Width;
+                        double dis = FindDistance(iFeatureWidth);
+                        _g.DrawString(dis.ToString("N2"), new Font("Times New Roman", 48, FontStyle.Bold), Brushes.Black, _x, _y + 60);*/
+                    }
+                }
+                if (_shapeChecker.IsCircle(_edgePoint, out _center, out _radius))
+                {
+                    Rectangle[] _rects = _blobCounter.GetObjectsRectangles();
+
+                    string _shapeString = "" + _shapeChecker.CheckShapeType(_edgePoint);
+                    Pen _pen = new Pen(Color.Red, 5.0f);
+                    int _x = (int)_center.X;
+                    int _y = (int)_center.Y;
+                    _g.DrawString(_shapeString, new Font("Times New Roman", 48, FontStyle.Bold), Brushes.Fuchsia, _x, _y);
+                    _g.DrawEllipse(_pen, (float)(_center.X - _radius),
+                                         (float)(_center.Y - _radius),
+                                         (float)(_radius * 2),
+                                         (float)(_radius * 2));
+
+                    //size of rectange
+                    foreach (Rectangle rc in _rects)
+                    {
+                        ///for debug
+                        //System.Diagnostics.Debug.WriteLine(
+                        //    string.Format("Circle size: ({0}, {1})", rc.Width, rc.Height));
+
+                        /*iFeatureWidth = rc.Width;
+                        double dis = FindDistance(iFeatureWidth);
+                        //textBox1.Text = dis.ToString("N2");
+                        _g.DrawString(dis.ToString("N2"), _font, _brush, _x, _y + 60);*/
+                    }
+                }
+            }
+        }
+
+            
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+            
+
 
         }
     }
