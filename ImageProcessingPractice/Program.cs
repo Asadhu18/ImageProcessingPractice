@@ -15,7 +15,7 @@ namespace ImageProcessingPractice
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new greySliderBar());
+            Application.Run(new Form1());
         }
     }
 }

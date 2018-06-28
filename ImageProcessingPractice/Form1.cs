@@ -19,15 +19,22 @@ using AForge.Math.Geometry;
 
 namespace ImageProcessingPractice
 {
-    public partial class greySliderBar : Form
+    public partial class Form1 : Form
     {
         public VideoCaptureDevice captureDevice;
         FilterInfoCollection deviceList;
         public double cr = 0.2125;
         public double cg = .7154;
         public double cb = .0721;
+        public double workingRedmodifier = .21525;
+        public double workingGreenmodifier = .7154;
+        public double workingBluemodifier = .0721;
+
+        public int caseValue = 0;
+        public int gausianToggle = 0;
+        public int colorToggle = 0;
         private System.Timers.Timer frameTimer = new System.Timers.Timer(2000);
-        public greySliderBar()
+        public Form1()
         {
             InitializeComponent();
         }
@@ -266,14 +273,14 @@ namespace ImageProcessingPractice
 
         private void circleDetection_Click(object sender, EventArgs e)
         {
-            Bitmap colorImg = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
-            Grayscale grayfilter = new Grayscale(cr, cg, cb);
-            Bitmap originalImage = (Bitmap)grayfilter.Apply(colorImg);
-            scrollableImagePanel1.Image = originalImage;
-            CannyEdgeDetector edgeDectector = new CannyEdgeDetector();
-            edgeDectector.HighThreshold =(byte) cannyLowerThresholdSlider.Value;
-            edgeDectector.LowThreshold = (byte)hScrollBar2.Value;
-            edgeDectector.ApplyInPlace(scrollableImagePanel1.Image);
+            //Bitmap colorImg = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
+            //Grayscale grayfilter = new Grayscale(cr, cg, cb);
+            //Bitmap originalImage = (Bitmap)grayfilter.Apply(colorImg);
+            //scrollableImagePanel1.Image = originalImage;
+            //CannyEdgeDetector edgeDectector = new CannyEdgeDetector();
+            //edgeDectector.HighThreshold =(byte) cannyLowerThresholdSlider.Value;
+            //edgeDectector.LowThreshold = (byte)hScrollBar2.Value;
+            //edgeDectector.ApplyInPlace(scrollableImagePanel1.Image);
 
 
 
@@ -287,40 +294,124 @@ namespace ImageProcessingPractice
             float thresholdValue = hScrollBar1.Value;
             Threshold filter = new Threshold((int)thresholdValue);
             filter.ApplyInPlace(scrollableImagePanel1.Image);*/
-            
-           /* Graphics g = Graphics.FromImage(originalImage);
-            Pen yellowPen = new Pen(Color.Yellow, 5.0f);
-            int length = blobObjectArray.Length;
-          
-            
 
-            for (int i = 0; i < length; i++)
-            {
-                List<IntPoint> edgePoints = blobCounter.GetBlobsEdgePoints(blobObjectArray[i]);
+            /* Graphics g = Graphics.FromImage(originalImage);
+             Pen yellowPen = new Pen(Color.Yellow, 5.0f);
+             int length = blobObjectArray.Length;
 
-                AForge.Point center = new AForge.Point();
-                float radius;
-                if (shapeChecker.IsCircle(edgePoints,out center,out radius))
-                {
-                    g.DrawEllipse(yellowPen,(int) center.X-radius, (int)center.Y-radius, (int)radius *2, (int)radius *2);
-                }
-            }
+
+
+             for (int i = 0; i < length; i++)
+             {
+                 List<IntPoint> edgePoints = blobCounter.GetBlobsEdgePoints(blobObjectArray[i]);
+
+                 AForge.Point center = new AForge.Point();
+                 float radius;
+                 if (shapeChecker.IsCircle(edgePoints,out center,out radius))
+                 {
+                     g.DrawEllipse(yellowPen,(int) center.X-radius, (int)center.Y-radius, (int)radius *2, (int)radius *2);
+                 }
+             }
+
+
+             yellowPen.Dispose();
+             g.Dispose();*/
+
             
-
-            yellowPen.Dispose();
-            g.Dispose();*/
             
         }
         public Bitmap edgeDetection() {
             Bitmap colorImg = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
-            Grayscale grayfilter = new Grayscale(cr, cg, cb);
-            Bitmap originalImage = (Bitmap)grayfilter.Apply(colorImg);
-            scrollableImagePanel1.Image = originalImage;
-            CannyEdgeDetector edgeDectector = new CannyEdgeDetector();
-            edgeDectector.HighThreshold = (byte)cannyUpperThresholdSlider.Value;
-            edgeDectector.LowThreshold = (byte)cannyLowerThresholdSlider.Value;
-            edgeDectector.ApplyInPlace(scrollableImagePanel1.Image);
-            return (Bitmap)scrollableImagePanel1.Image;
+            Grayscale grayfilter = new Grayscale(redSlider., cg, cb);
+            GaussianBlur blurFilter = new GaussianBlur();
+            GaussianSharpen sharpenFilter = new GaussianSharpen();
+            Bitmap originalImage;
+            if (gausianToggle == 0)
+            {
+                originalImage = (Bitmap)grayfilter.Apply(colorImg);
+            }
+            else if (gausianToggle == 1)
+            {
+                originalImage = sharpenFilter.Apply((Bitmap)colorImg);
+                originalImage = (Bitmap)grayfilter.Apply(originalImage);
+            }
+            else
+            {
+                originalImage = blurFilter.Apply((Bitmap)colorImg);
+                originalImage = (Bitmap)grayfilter.Apply(originalImage);
+            }
+            switch (caseValue)
+            {
+               
+                case 1:
+                    //canny
+                    scrollableImagePanel1.Image = originalImage;
+                    CannyEdgeDetector edgeDectector = new CannyEdgeDetector();
+                    edgeDectector.HighThreshold = (byte)cannyUpperThresholdSlider.Value;
+                    edgeDectector.LowThreshold = (byte)cannyLowerThresholdSlider.Value;
+                    edgeDectector.ApplyInPlace(scrollableImagePanel1.Image);
+                    return (Bitmap)scrollableImagePanel1.Image;
+                case 2:
+                    //gray scale
+                    scrollableImagePanel3.Image = originalImage;
+                    Grayscale customGrayScale = new Grayscale((cr*(graySlider.Value/100)),(cb * (graySlider.Value / 100)), (cg * (graySlider.Value / 100)));
+                    originalImage = customGrayScale.Apply(colorImg);
+                    return originalImage ;
+                case 3:
+                    //Black and White
+                    scrollableImagePanel2.Image = originalImage;
+                    Threshold thresholdFilter = new Threshold();
+                    thresholdFilter.ThresholdValue = hScrollBar1.Value;
+                    thresholdFilter.ApplyInPlace(scrollableImagePanel2.Image);
+                    return (Bitmap)scrollableImagePanel2.Image;
+                case 4:
+                    //Mixed Color Edits
+                    scrollableImagePanel5.Image = colorImg;
+                    ChannelFiltering colorChannelFilter = new ChannelFiltering();
+                    colorChannelFilter.Red = new IntRange(0,redSlider.Value);
+                    colorChannelFilter.Blue = new IntRange(0, blueSlider.Value);
+                    colorChannelFilter.Green = new IntRange(0, greenSlider.Value);
+                    colorChannelFilter.ApplyInPlace((Bitmap)scrollableImagePanel5.Image);
+                    return (Bitmap)scrollableImagePanel5.Image;
+                case 5:
+                    //Specific Color edits
+                    ColorFiltering colorFilter = new ColorFiltering();
+                    if (colorToggle == 1)
+                    {
+                        Console.WriteLine("Red disabled");
+                        colorFilter.Red = new IntRange(0, 0);
+                        colorFilter.Blue = new IntRange(0, 255);
+                        colorFilter.Green = new IntRange(0, 255);
+                        colorFilter.Apply(colorImg);
+                        originalImage = colorImg;
+                        return originalImage;
+                    }
+                    else if (colorToggle == 2)
+                    {
+                        Console.WriteLine("Blue disabled");
+                        colorFilter.Red = new IntRange(0, 255);
+                        colorFilter.Blue = new IntRange(0, 0);
+                        colorFilter.Green = new IntRange(0, 255);
+                        colorFilter.Apply(colorImg);
+                        originalImage = colorImg;
+                        return originalImage;
+                    }
+                    else if (colorToggle == 3)
+                    {
+                        Console.WriteLine("Green disabled");
+                        colorFilter.Red = new IntRange(0, 255);
+                        colorFilter.Blue = new IntRange(0, 255);
+                        colorFilter.Green = new IntRange(0, 0);
+                        colorFilter.Apply(colorImg);
+                        originalImage = colorImg;
+                        return originalImage;
+                    }
+                    else {
+                        return colorImg;
+                    }
+            }
+            return originalImage;
+           
         }
         private System.Drawing.Point[] ToPointsArray(List<IntPoint> points)
         {
@@ -333,7 +424,6 @@ namespace ImageProcessingPractice
         }
         public void processShapes()
         {
-
 
             //Working Variables
             Pen fuschiaPen = new Pen(Color.Fuchsia, 3.0f);
@@ -348,13 +438,13 @@ namespace ImageProcessingPractice
 
 
             //Turning the Background Black and getting rid of the green of the PCB
-            ColorFiltering colorFilter = new ColorFiltering();
+            /*ColorFiltering colorFilter = new ColorFiltering();
             Threshold filter = new Threshold((int)hScrollBar1.Value);
 
             colorFilter.Red = new IntRange(0, hScrollBar1.Value);
             colorFilter.Blue = new IntRange(0, hScrollBar1.Value);
             colorFilter.Green = new IntRange(0, hScrollBar1.Value);
-
+            */
             // colorFilter.ApplyInPlace(bmpData);
             workingFrame.UnlockBits(bmpData);
 
@@ -364,23 +454,41 @@ namespace ImageProcessingPractice
             BlobCounter blobCounter = new BlobCounter();
 
             blobCounter.FilterBlobs = true;
-            blobCounter.MinHeight = 5;
-            blobCounter.MinWidth = 5;
-            //blobCounter.MinHeight = hScrollBar2.Value;
-            //blobCounter.MinWidth = hScrollBar2.Value;
+            //blobCounter.MinHeight = 5;
+            //blobCounter.MinWidth = 5;
+            blobCounter.MinHeight = hScrollBar2.Value;
+            blobCounter.MinWidth = hScrollBar2.Value;
 
             blobCounter.ProcessImage(bmpData);
             Blob[] blobs = blobCounter.GetObjectsInformation();
 
-            scrollableImagePanel1.Image = (Bitmap)workingFrame.Clone();
+            //scrollableImagePanel1.Image = (Bitmap)workingFrame.Clone();
             //Classifying the objects{}
             AForge.Math.Geometry.SimpleShapeChecker shapeCheck = new SimpleShapeChecker();
             Bitmap tempBitmap = new Bitmap(workingFrame.Width, workingFrame.Height);
             Graphics g = Graphics.FromImage(tempBitmap);
             g.DrawImage(workingFrame, 0, 0);
-            scrollableImagePanel1.Image = tempBitmap;
 
-
+            if (caseValue == 1)
+            {
+             scrollableImagePanel1.Image = tempBitmap;
+            }
+            if (caseValue == 2)
+            {
+                scrollableImagePanel3.Image = tempBitmap;
+            }
+            if (caseValue == 3)
+            {
+                scrollableImagePanel2.Image = tempBitmap;
+            }
+            if (caseValue == 4)
+            {
+                scrollableImagePanel5.Image = tempBitmap;
+            }
+            if (caseValue == 5)
+            {
+                scrollableImagePanel4.Image = tempBitmap;
+            }   
             int blobLength = blobs.Length;
             for (int i = 0; i < blobLength; i++)
             {
@@ -400,18 +508,16 @@ namespace ImageProcessingPractice
                     List<IntPoint> corners = PointsCloud.FindQuadrilateralCorners(edgePoints);
                     if (shapeCheck.IsQuadrilateral(edgePoints, out corners))
                     {
-                        //g.DrawPolygon(redPen, ToPointsArray(corners));
                         Rectangle testRectangle = new Rectangle(corners[0].X, corners[0].Y, (corners[1].X - corners[0].X), corners[3].Y - corners[0].Y);
                         g.DrawRectangle(redPen, testRectangle);
+
                         if (shapeCheck.CheckPolygonSubType(corners) == PolygonSubType.Rectangle)
                         {
-                            Console.WriteLine("Rectangle Found!!");
-                            g.DrawPolygon(redPen, ToPointsArray(corners));
+                            g.DrawPolygon(aquaPen, ToPointsArray(corners));
 
                         }
                         else
                         {
-                            Console.WriteLine("Rectangle Found!!!");
                             g.DrawPolygon(orangePen, ToPointsArray(corners));
                         }
                     }
@@ -422,38 +528,21 @@ namespace ImageProcessingPractice
                 //orangePen.Dispose();
 
                 //g.Dispose();
-
-
             }
         }
 
-
-        private void label6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void hScrollBar2_Scroll(object sender, ScrollEventArgs e)
         {
             labelBlobSize.Text = hScrollBar2.Value.ToString();
             processShapes();
-
         }
 
-        private void label7_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void cannyLowerThresholdSlider_Scroll(object sender, ScrollEventArgs e)
         {
             cannyLowerValue.Text = cannyLowerThresholdSlider.Value.ToString();
-            processShapes();
+           processShapes();
 
         }
 
@@ -461,16 +550,6 @@ namespace ImageProcessingPractice
         {
             CannyUpperValue.Text = cannyUpperThresholdSlider.Value.ToString();
             processShapes();
-        }
-
-        private void label13_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label14_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void graySlider_Scroll(object sender, ScrollEventArgs e)
@@ -481,20 +560,96 @@ namespace ImageProcessingPractice
 
         private void redSlider_Scroll(object sender, ScrollEventArgs e)
         {
-            redLabel.Text = redSlider.Value.ToString();
+            redLabel.Text = (redSlider.Value*.01).ToString();
             processShapes();
         }
 
         private void blueSlider_Scroll(object sender, ScrollEventArgs e)
         {
-            blueValue.Text = blueSlider.Value.ToString();
+            blueValue.Text = (blueSlider.Value*.01).ToString();
             processShapes();
         }
 
         private void greenSlider_Scroll(object sender, ScrollEventArgs e)
         {
-            greenValue.Text = greenSlider.Value.ToString();
+         workingGreenmodifier = (double)(greenSlider.Value*.01);
+        greenValue.Text = greenSlider.Value.ToString();
             processShapes();
+        }
+
+        private void cannyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            caseValue = 1;
+            processShapes();
+            
+        }
+
+        private void blackAndWhiteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            caseValue = 3;
+            processShapes();
+        }
+
+        private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
+        {
+            blkLabel.Text = hScrollBar1.Value.ToString();
+           processShapes();
+        }
+
+        private void allFiltersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int i = 1; i < 6; i++) {
+                caseValue= i;
+                processShapes();
+            }
+        }
+
+        private void grayScaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            caseValue = 2;
+           processShapes();
+        }
+
+        private void colorFilterationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            caseValue = 4;
+            processShapes();
+        }
+
+        private void sharpenCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            gausianToggle = 1;
+        }
+
+        private void blurCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            gausianToggle = 2;
+        }
+
+        private void resfreshBtn_Click(object sender, EventArgs e)
+        {
+            processShapes();
+        }
+
+        private void specificColorFilterationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            caseValue = 5;
+            processShapes();
+        }
+
+        private void redCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            colorToggle = 1;
+        }
+
+        private void blueCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            colorToggle = 2;
+        }
+
+        private void greenCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            colorToggle = 3;
         }
     }
 }
