@@ -322,7 +322,7 @@ namespace ImageProcessingPractice
         }
         public Bitmap edgeDetection() {
             Bitmap colorImg = (Bitmap)videoSourcePlayer1.GetCurrentVideoFrame();
-            Grayscale grayfilter = new Grayscale(redSlider., cg, cb);
+            Grayscale grayfilter = new Grayscale(cr, cg, cb);
             GaussianBlur blurFilter = new GaussianBlur();
             GaussianSharpen sharpenFilter = new GaussianSharpen();
             Bitmap originalImage;

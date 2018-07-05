@@ -41,3 +41,4 @@ C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\bin\
 C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\Ionic.Zip.dll
 C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\HyrelPrinterControls.pdb
 C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\obj\Debug\ImageProcessingPractice.Form1.resources
+C:\Users\Hyrel\Source\Repos\ImageProcessingPractice\ImageProcessingPractice\bin\Debug\HyrelPrinterControls.dll
